@@ -5,9 +5,9 @@ import { Membre } from '@/lib/types'
 const fallbackMembres: Membre[] = [
   {
     id: 'm1',
-    nom: "Sílvia Rovira i Vila",
-    carrec: "Portaveu i Cap de llista",
-    bio: "Llicenciada en Dret. Defensora ferma de la identitat nacional i de la seguretat a Castell-Platja d'Aro i S'Agaró. Amb una llarga trajectòria en l'àmbit jurídic local.",
+    nom: "Aitor Tendero i Guirado",
+    carrec: "Portaveu i Regidor Municipal",
+    bio: "Graduat en Ciències Polítiques i de l'Administració (UPF). Emprenedor local amb àmplia experiència internacional (Austràlia). Regidor i portaveu a l'Ajuntament de Castell-Platja d'Aro i S'Agaró, on treballa activament en comissions de Turisme, Promoció Econòmica i Esports. Defensor de la identitat nacional i la seguretat ciutadana.",
     foto: null,
     ordre: 1,
     actiu: true,
@@ -15,21 +15,11 @@ const fallbackMembres: Membre[] = [
   },
   {
     id: 'm2',
-    nom: "Joan Mas i Sabater",
-    carrec: "Coordinador Local",
-    bio: "Empresari de restauració a Platja d'Aro. Compromès amb la defensa dels autònoms, comerciants i empreses de proximitat catalanes.",
+    nom: "David Schelvis i Gibert",
+    carrec: "Coordinador d'Esdeveniments i Entitats",
+    bio: "Empresari especialitzat en la gestió i organització d'esdeveniments d'oci, cultura i esports a Platja d'Aro. President de l'Associació Penya Barça Fans d'Aro i promotor actiu del teixit social, turístic i cultural local.",
     foto: null,
     ordre: 2,
-    actiu: true,
-    created_at: new Date().toISOString()
-  },
-  {
-    id: 'm3',
-    nom: "Carme Soler i Font",
-    carrec: "Responsable de Cohesió i Afiliats",
-    bio: "Professora de secundària. Compromesa amb el manteniment del teixit associatiu, la llengua catalana i les nostres tradicions.",
-    foto: null,
-    ordre: 3,
     actiu: true,
     created_at: new Date().toISOString()
   }

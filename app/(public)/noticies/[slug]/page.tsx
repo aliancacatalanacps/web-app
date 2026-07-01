@@ -14,9 +14,9 @@ const fallbackNoticies: Noticia[] = [
   {
     id: 'f1',
     tipus: 'noticia',
-    titol: "Aliança Catalana presenta un pla integral per reformar el passeig marítim de Platja d'Aro",
-    slug: 'pla-integral-passeig-maritim',
-    cos: "El nostre equip proposa una renovació sostenible que prioritzi els vianants i recolzi el comerç local.\n\nVolem crear espais amplis per a passejar, millorar l'enllumenat públic utilitzant tecnologia LED de baix consum, i augmentar les zones verdes amb plantes autòctones de la Costa Brava.\n\nAquesta mesura no només farà el passeig més atractiu per als veïns, sinó que reactivarà l'activitat econòmica de les terrasses i botigues locals durant la temporada baixa. Seguirem defensant aquest i altres projectes al proper plenari municipal.",
+    titol: "Aliança Catalana demana reforçar la seguretat i aplicar un pla de civisme integral a Platja d'Aro per a la temporada d'estiu",
+    slug: 'reforc-seguretat-pla-civisme-estiu',
+    cos: "El regidor i portaveu Aitor Tendero demana mesures fermes davant l'augment del turisme per garantir el descans dels veïns i recolzar els comerciants locals del municipi.\n\nProposem augmentar els patrullatges preventius de la Policia Local a les zones comercials i d'oci nocturn, i sancionar amb severitat el soroll i les actituds incíviques per assegurar que Platja d'Aro segueixi sent una destinació acollidora i segura. Treballem cada dia per mantenir l'ordre i el benestar de la nostra comunitat.",
     data_publicacio: new Date().toISOString(),
     imatge_portada: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
     link_extern: null,
@@ -26,21 +26,21 @@ const fallbackNoticies: Noticia[] = [
   {
     id: 'f2',
     tipus: 'premsa',
-    titol: "Entrevista a la cap de llista a Ràdio Platja d'Aro: 'Volem governar per als veïns'",
-    slug: 'entrevista-radio-platjadaro',
-    cos: "La portaveu d'Aliança Catalana Platja d'Aro explica les prioritats per al pròxim plenari municipal.",
+    titol: "Aitor Tendero a Ràdio Platja d'Aro: 'Cal una regulació equilibrada per defensar els petits propietaris d'habitatges turístics'",
+    slug: 'aitor-tendero-declaracions-habitatge-turistic',
+    cos: "El portaveu municipal d'Aliança Catalana defensa els autònoms i petits propietaris de la Vall d'Aro davant les noves restriccions que amenacen l'economia familiar.",
     data_publicacio: new Date(Date.now() - 86400000).toISOString(),
     imatge_portada: null,
-    link_extern: 'https://www.radioplatjadaro.cat',
+    link_extern: 'https://www.rpa.cat',
     publicat: true,
     created_at: new Date().toISOString()
   },
   {
     id: 'f3',
-    tipus: 'galeria',
-    titol: "Èxit de convocatòria a la parada informativa de Platja d'Aro",
-    slug: 'exit-convocatoria-parada-informativa',
-    cos: "Agraïm a tots els veïns i simpatitzants que es van apropar per conversar sobre els nostres projectes.\n\nHem recollit propostes molt interessants sobre seguretat, neteja i suport al petit comerç de Castell i Platja d'Aro. Treballem per vosaltres!",
+    tipus: 'noticia',
+    titol: "David Schelvis proposa un pla de dinamització per recolzar les entitats, penyes i associacions culturals de Castell i Platja d'Aro",
+    slug: 'david-schelvis-pla-dinamitzacio-entitats-locals',
+    cos: "El representant de l'equip local proposa simplificar la burocràcia municipal i crear noves línies de suport directe per reactivar l'activitat de les associacions esportives i de lleure que formen la identitat del nostre municipi.\n\nHem recollit propostes de diverses entitats locals per dissenyar un suport econòmic flexible que els permeti seguir dinamitzant Castell-Platja d'Aro i S'Agaró.",
     data_publicacio: new Date(Date.now() - 172800000).toISOString(),
     imatge_portada: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
     link_extern: null,
@@ -50,7 +50,7 @@ const fallbackNoticies: Noticia[] = [
 ]
 
 const fallbackFotos: Record<string, NoticiaFoto[]> = {
-  'exit-convocatoria-parada-informativa': [
+  'david-schelvis-pla-dinamitzacio-entitats-locals': [
     { id: 'pho1', noticia_id: 'f3', url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80', ordre: 1 },
     { id: 'pho2', noticia_id: 'f3', url: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80', ordre: 2 },
     { id: 'pho3', noticia_id: 'f3', url: 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&q=80', ordre: 3 },
