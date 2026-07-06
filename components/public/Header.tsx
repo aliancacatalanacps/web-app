@@ -34,8 +34,13 @@ function TikTokIcon({ className }: { className?: string }) {
 
 const navLinks = [
   { href: '/', label: 'Inici' },
-  { href: '/qui-som', label: 'Qui som' },
   { href: '/noticies', label: 'Notícies' },
+  { href: '/qui-som', label: 'Qui som' },
+  { href: '/transparencia', label: 'Transparència' },
+  { href: '/dades', label: 'Dades' },
+  { href: '/preguntes', label: 'Preguntes' },
+  { href: '/compromisos', label: 'Compromisos' },
+  { href: '/comerc', label: 'Comerç' },
   { href: '/contacte', label: 'Contacte' },
 ]
 
@@ -67,14 +72,14 @@ export default function Header({ config = {} }: { config?: Record<string, string
           </div>
 
           {/* Menú Desktop */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden lg:flex space-x-3.5">
             {navLinks.map((link) => {
               const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
               return (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`text-sm font-medium transition-colors hover:text-primary ${
+                  className={`text-[11px] font-bold uppercase tracking-wider transition-colors hover:text-primary ${
                     isActive ? 'text-primary border-b-2 border-primary pb-1' : 'text-neutral-600'
                   }`}
                 >
@@ -119,7 +124,7 @@ export default function Header({ config = {} }: { config?: Record<string, string
             {/* Hamburguesa mòbil */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-md text-neutral-600 hover:text-primary hover:bg-neutral-100"
+              className="lg:hidden p-2 rounded-md text-neutral-600 hover:text-primary hover:bg-neutral-100"
               aria-label={mobileMenuOpen ? 'Tancar menú' : 'Obrir menú'}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -130,7 +135,7 @@ export default function Header({ config = {} }: { config?: Record<string, string
 
       {/* Menú Mòbil */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-neutral-200 bg-white px-4 py-4 space-y-3">
+        <div className="lg:hidden border-b border-neutral-200 bg-white px-4 py-4 space-y-3">
           {navLinks.map((link) => {
             const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href))
             return (
@@ -149,7 +154,7 @@ export default function Header({ config = {} }: { config?: Record<string, string
           
           <div className="flex items-center gap-4 px-3 py-2 pt-4 border-t border-neutral-100 text-neutral-500">
             <a
-              href="https://instagram.com/aliancacatalanaplatjadaro"
+              href={instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-primary"
@@ -157,7 +162,7 @@ export default function Header({ config = {} }: { config?: Record<string, string
               <InstagramIcon />
             </a>
             <a
-              href="https://tiktok.com/@aliancacatalanaplatjadaro"
+              href={tiktokUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-primary"
@@ -165,7 +170,7 @@ export default function Header({ config = {} }: { config?: Record<string, string
               <TikTokIcon className="w-5 h-5" />
             </a>
             <a
-              href="https://x.com/acplatjadaro"
+              href={twitterUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-primary"

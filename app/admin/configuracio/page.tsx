@@ -14,6 +14,7 @@ export default function AdminConfiguracioPage() {
     xarxes_twitter: '',
     posicionament_hero_titol: '',
     posicionament_hero_descripcio: '',
+    google_apps_script_url: '',
   })
   
   const [loading, setLoading] = useState(true)
@@ -241,6 +242,40 @@ export default function AdminConfiguracioPage() {
                 placeholder="https://x.com/nomperfil"
               />
             </div>
+          </div>
+        </div>
+
+        {/* 4. SECCIÓ GOOGLE SHEETS */}
+        <div className="bg-white border border-neutral-200 rounded-lg p-5 shadow-sm space-y-4">
+          <h3 className="font-sans font-bold text-neutral-900 text-sm flex items-center gap-1.5 uppercase tracking-wider border-b border-neutral-100 pb-2">
+            <Settings size={16} className="text-primary" />
+            Sincronització amb Google Sheets (Drive)
+          </h3>
+
+          <div>
+            <label className="block font-bold text-neutral-600 uppercase tracking-wider mb-1">
+              Google Apps Script Web App URL
+            </label>
+            <input
+              type="url"
+              value={config.google_apps_script_url}
+              onChange={(e) => handleFieldChange('google_apps_script_url', e.target.value)}
+              className="w-full rounded border border-neutral-300 px-3 py-2 text-xs text-neutral-900 focus:border-primary outline-none font-mono"
+              placeholder="https://script.google.com/macros/s/.../exec"
+            />
+          </div>
+
+          <div className="bg-neutral-50 border border-neutral-100 rounded p-4 text-[10px] space-y-2 text-neutral-500 leading-normal font-mono">
+            <p className="font-bold text-neutral-700 uppercase tracking-wide">💡 Com enllaçar-ho amb el teu Full de Càlcul:</p>
+            <ol className="list-decimal pl-4 space-y-1">
+              <li>Obre el teu Google Sheet a Drive.</li>
+              <li>Ves al menú superior: <b>Extensions &gt; Apps Script</b>.</li>
+              <li>Esborra tot el codi de l'editor i enganxa-hi exactament el codi que et facilitem en la documentació de l'assistent.</li>
+              <li>Fes clic a <b>Implementar (Deploy) &gt; Nova implementació (New deployment)</b>.</li>
+              <li>Tria el tipus: <b>Aplicació web (Web app)</b>.</li>
+              <li>A <i>"Qui té accés"</i> tria: <b>Tothom (Anyone)</b>.</li>
+              <li>Copia la <b>URL de l'aplicació web</b> que et doni i enganxa-la en aquest formulari a dalt.</li>
+            </ol>
           </div>
         </div>
 
