@@ -213,18 +213,18 @@ export default function Header({ config = {} }: { config?: Record<string, string
               {user ? (
                 <Link
                   href={userRole === 'admin' ? '/admin' : '/tauler'}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider shadow-sm hover:bg-primary-dark transition-all"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-neutral-900 text-white hover:bg-neutral-800 text-[10px] font-black uppercase tracking-wider shadow-sm transition-all border border-neutral-800"
                 >
-                  <User size={12} />
+                  <User size={12} className="text-primary" />
                   <span>{userRole === 'admin' ? 'Panell Admin' : 'El meu tauler'}</span>
                 </Link>
               ) : (
                 <Link
                   href="/login"
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-neutral-300 text-neutral-600 hover:text-primary hover:border-primary text-[10px] font-bold uppercase tracking-wider transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary text-neutral-950 hover:bg-primary-dark text-[10px] font-black uppercase tracking-wider transition-all shadow-sm border border-primary"
                 >
-                  <LogIn size={11} />
-                  <span>Accedir</span>
+                  <LogIn size={11} className="text-neutral-950" />
+                  <span>Inicia sessió</span>
                 </Link>
               )}
             </div>
