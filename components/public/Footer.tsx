@@ -28,7 +28,13 @@ function TikTokIcon({ className }: { className?: string }) {
   )
 }
 
-export default function Footer() {
+export default function Footer({ config = {} }: { config?: Record<string, string> }) {
+  const email = config.contacte_email || 'platjadaro@aliancacatalana.cat'
+  const telefon = config.contacte_telefon
+  const instagramUrl = config.xarxes_instagram || 'https://instagram.com/acplatjadaro'
+  const tiktokUrl = config.xarxes_tiktok || 'https://tiktok.com/@acplatjadaro'
+  const twitterUrl = config.xarxes_twitter || 'https://x.com/acplatjadaro'
+
   return (
     <footer className="border-t border-neutral-200 bg-neutral-50 py-12 text-neutral-600">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -39,15 +45,15 @@ export default function Footer() {
               <img
                 src="/logo.png"
                 alt="Aliança Catalana"
-                className="h-9 w-auto object-contain"
+                className="h-10 w-auto object-contain"
               />
               <div className="flex flex-col ml-2 border-l border-neutral-200 pl-2">
-                <span className="font-sans font-bold text-xs tracking-tight text-neutral-900 leading-none">Platja d'Aro</span>
-                <span className="font-sans text-[7px] font-bold text-primary tracking-widest uppercase mt-0.5 leading-none">i S'Agaró</span>
+                <span className="font-sans font-bold text-[10px] tracking-tight text-neutral-900 leading-none">Castell d'Aro</span>
+                <span className="font-sans text-[7px] font-bold text-primary tracking-widest uppercase mt-0.5 leading-none">Platja d'Aro i s'Agaró</span>
               </div>
             </div>
             <p className="text-sm text-neutral-500 max-w-xs">
-              Secció municipal d'Aliança Catalana a Platja d'Aro. Defensa de la identitat, arrels catalanes, seguretat i prosperitat.
+              Secció municipal d'Aliança Catalana a Castell d'Aro, Platja d'Aro i s'Agaró. Defensa de la identitat, arrels catalanes, seguretat i prosperitat.
             </p>
           </div>
 
@@ -73,12 +79,19 @@ export default function Footer() {
           {/* Contacte i Socials */}
           <div className="flex flex-col space-y-4">
             <h4 className="font-semibold text-sm text-neutral-900 uppercase tracking-wider">Contacta'ns</h4>
-            <p className="text-sm text-neutral-500">
-              Correu: <a href="mailto:platjadaro@aliancacatalana.cat" className="hover:text-primary">platjadaro@aliancacatalana.cat</a>
-            </p>
+            <div className="space-y-1.5 text-sm text-neutral-500">
+              <p>
+                Correu: <a href={`mailto:${email}`} className="hover:text-primary font-mono text-xs">{email}</a>
+              </p>
+              {telefon && (
+                <p>
+                  Telèfon: <span className="font-semibold text-neutral-700">{telefon}</span>
+                </p>
+              )}
+            </div>
             <div className="flex items-center gap-4 text-neutral-500 pt-2">
               <a
-                href="https://instagram.com/aliancacatalanaplatjadaro"
+                href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
@@ -87,7 +100,7 @@ export default function Footer() {
                 <InstagramIcon />
               </a>
               <a
-                href="https://tiktok.com/@aliancacatalanaplatjadaro"
+                href={tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"
@@ -96,7 +109,7 @@ export default function Footer() {
                 <TikTokIcon />
               </a>
               <a
-                href="https://x.com/acplatjadaro"
+                href={twitterUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary transition-colors"

@@ -39,25 +39,29 @@ const navLinks = [
   { href: '/contacte', label: 'Contacte' },
 ]
 
-export default function Header() {
+export default function Header({ config = {} }: { config?: Record<string, string> }) {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const instagramUrl = config.xarxes_instagram || 'https://instagram.com/acplatjadaro'
+  const tiktokUrl = config.xarxes_tiktok || 'https://tiktok.com/@acplatjadaro'
+  const twitterUrl = config.xarxes_twitter || 'https://x.com/acplatjadaro'
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-neutral-200 bg-white/90 backdrop-blur-md">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+        <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <div className="flex">
             <Link href="/" className="flex items-center">
               <img
                 src="/logo.png"
                 alt="Aliança Catalana"
-                className="h-10 w-auto object-contain"
+                className="h-14 w-auto object-contain"
               />
-              <div className="flex flex-col ml-2.5 border-l border-neutral-200 pl-2.5">
-                <span className="font-sans font-bold text-[13px] tracking-tight text-neutral-900 leading-none">Platja d'Aro</span>
-                <span className="font-sans text-[8px] font-bold text-primary tracking-widest uppercase mt-0.5 leading-none">i S'Agaró</span>
+              <div className="flex flex-col ml-3 border-l border-neutral-200 pl-3">
+                <span className="font-sans font-bold text-[12px] tracking-tight text-neutral-900 leading-snug">Castell d'Aro</span>
+                <span className="font-sans text-[9px] font-bold text-primary tracking-wider uppercase leading-none">Platja d'Aro i s'Agaró</span>
               </div>
             </Link>
           </div>
@@ -84,7 +88,7 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <div className="hidden sm:flex items-center gap-3 text-neutral-500">
               <a
-                href="https://instagram.com/aliancacatalanaplatjadaro"
+                href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary"
@@ -93,7 +97,7 @@ export default function Header() {
                 <InstagramIcon />
               </a>
               <a
-                href="https://tiktok.com/@aliancacatalanaplatjadaro"
+                href={tiktokUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary"
@@ -102,7 +106,7 @@ export default function Header() {
                 <TikTokIcon />
               </a>
               <a
-                href="https://x.com/acplatjadaro"
+                href={twitterUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-primary"

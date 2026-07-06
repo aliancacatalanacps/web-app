@@ -13,7 +13,8 @@ import {
   HelpCircle,
   ShieldCheck,
   Store,
-  MailQuestion
+  MailQuestion,
+  Settings
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -36,6 +37,7 @@ const desktopLinks = [
   { href: '/admin/preguntes', label: 'Bústia preguntes', icon: HelpCircle },
   { href: '/admin/compromisos', label: 'Compromisos', icon: ShieldCheck },
   { href: '/admin/comerc', label: 'Comerços', icon: Store },
+  { href: '/admin/configuracio', label: 'Configuració', icon: Settings },
 ]
 
 export default function AdminNav() {

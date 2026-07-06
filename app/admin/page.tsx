@@ -11,7 +11,8 @@ import {
   TrendingUp,
   HelpCircle,
   ShieldCheck,
-  Store
+  Store,
+  Settings
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Noticia, Contacte } from '@/lib/types'
@@ -155,7 +156,7 @@ export default async function AdminDashboardPage() {
       <div className="space-y-4">
         <h3 className="font-sans font-bold text-sm text-neutral-900 uppercase tracking-wider">Gestió de Mòduls</h3>
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
           <Link href="/admin/butlleti" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
             <MailQuestion className="text-primary" size={20} />
             <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Butlletí</span>
@@ -190,6 +191,11 @@ export default async function AdminDashboardPage() {
               <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-yellow-500 rounded-full"></span>
             )}
             <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Comerços</span>
+          </Link>
+
+          <Link href="/admin/configuracio" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
+            <Settings className="text-primary" size={20} />
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Configuració</span>
           </Link>
         </div>
       </div>

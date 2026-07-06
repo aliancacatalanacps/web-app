@@ -4,10 +4,13 @@ import { createClient } from '@/lib/supabase/server'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { nom, pregunta } = body
+    const { nom, email, pregunta } = body
 
     if (!pregunta || pregunta.trim().length < 10) {
       return NextResponse.json({ error: 'La pregunta ha de tenir almenys 10 caràcters.' }, { status: 400 })
+    }
+    if (!email || !email.includes('@')) {
+      return NextResponse.json({ error: 'Cal introduir un correu electrònic vàlid.' }, { status: 400 })
     }
 
     const supabase = await createClient()
@@ -17,6 +20,7 @@ export async function POST(request: Request) {
       .insert([
         {
           nom: nom ? nom.substring(0, 50) : null,
+          email: email.trim(),
           pregunta: pregunta.trim(),
           resposta: null,
           respost: false,

@@ -5,12 +5,18 @@ import { Send, CheckCircle2, AlertTriangle } from 'lucide-react'
 
 export default function PreguntaForm() {
   const [nom, setNom] = useState('')
+  const [email, setEmail] = useState('')
   const [pregunta, setPregunta] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    if (!email || !email.includes('@')) {
+      setStatus('error')
+      setErrorMessage('Si us plau, introdueix un correu electrònic vàlid per poder rebre la resposta.')
+      return
+    }
     if (!pregunta || pregunta.trim().length < 10) {
       setStatus('error')
       setErrorMessage('La pregunta ha de tenir almenys 10 caràcters.')
@@ -22,12 +28,17 @@ export default function PreguntaForm() {
       const res = await fetch('/api/preguntes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom: nom.trim() || null, pregunta: pregunta.trim() })
+        body: JSON.stringify({
+          nom: nom.trim() || 'Anònim',
+          email: email.trim(),
+          pregunta: pregunta.trim()
+        })
       })
 
       if (res.ok) {
         setStatus('success')
         setNom('')
+        setEmail('')
         setPregunta('')
       } else {
         const data = await res.json()
@@ -49,7 +60,7 @@ export default function PreguntaForm() {
         </div>
         <h4 className="font-sans font-bold text-neutral-900 text-sm">Pregunta tramesa amb èxit!</h4>
         <p className="text-xs text-neutral-500 leading-normal">
-          El nostre regidor rebrà la teva consulta de seguida. S'analitzarà i es respondrà el més aviat possible.
+          El nostre regidor rebrà la teva consulta de seguida. S'analitzarà i es respondrà el més aviat possible al correu que has indicat.
         </p>
         <button
           onClick={() => setStatus('idle')}
@@ -63,19 +74,37 @@ export default function PreguntaForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-      <div>
-        <label htmlFor="nom" className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-1">
-          Nom / Sobrenom <span className="text-[10px] text-neutral-400 font-normal">(opcional)</span>
-        </label>
-        <input
-          type="text"
-          id="nom"
-          value={nom}
-          onChange={(e) => setNom(e.target.value)}
-          disabled={status === 'loading'}
-          placeholder="Ex: Joan de S'Agaró"
-          className="w-full rounded border border-neutral-300 px-3 py-2 text-xs text-neutral-900 bg-white focus:border-primary outline-none transition-colors"
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="nom" className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-1">
+            Nom o Sobrenom
+          </label>
+          <input
+            type="text"
+            id="nom"
+            value={nom}
+            onChange={(e) => setNom(e.target.value)}
+            disabled={status === 'loading'}
+            placeholder="Ex: Joan de S'Agaró"
+            className="w-full rounded border border-neutral-300 px-3 py-2 text-xs text-neutral-900 bg-white focus:border-primary outline-none transition-colors"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="email" className="block text-xs font-bold text-neutral-600 uppercase tracking-wider mb-1">
+            Correu electrònic *
+          </label>
+          <input
+            type="email"
+            id="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={status === 'loading'}
+            placeholder="Ex: joan@correu.cat"
+            className="w-full rounded border border-neutral-300 px-3 py-2 text-xs text-neutral-900 bg-white focus:border-primary outline-none transition-colors"
+          />
+        </div>
       </div>
 
       <div>
