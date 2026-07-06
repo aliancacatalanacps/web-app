@@ -3,12 +3,21 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { ComercLocal } from '@/lib/types'
-import { Store, Check, Trash2, Clock, MapPin, Phone, Globe } from 'lucide-react'
+import { Store, Check, Trash2, Clock, MapPin, Phone, Globe, Plus, Loader2 } from 'lucide-react'
 
 export default function AdminComercPage() {
   const [comercos, setComercos] = useState<ComercLocal[]>([])
   const [loading, setLoading] = useState(true)
   const [errorMsg, setErrorMsg] = useState('')
+
+  // Estats del formulari per afegir comerç
+  const [nom, setNom] = useState('')
+  const [categoria, setCategoria] = useState('')
+  const [adreca, setAdreca] = useState('')
+  const [telefon, setTelefon] = useState('')
+  const [web, setWeb] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [mostrarForm, setMostrarForm] = useState(false)
 
   const supabase = createClient()
 
@@ -32,6 +41,46 @@ export default function AdminComercPage() {
     fetchComercos()
   }, [])
 
+  async function handleAddComerc(e: React.FormEvent) {
+    e.preventDefault()
+    if (!nom || !categoria) {
+      alert('El nom i la categoria són camps obligatoris.')
+      return
+    }
+
+    setSaving(true)
+    setErrorMsg('')
+    try {
+      const { error } = await supabase
+        .from('comerc_local')
+        .insert([
+          {
+            nom: nom.trim(),
+            categoria: categoria.trim(),
+            adreca: adreca.trim() || null,
+            telefon: telefon.trim() || null,
+            web: web.trim() || null,
+            aprovat: true // Un comerç afegit directament per l'admin s'aprova a l'instant
+          }
+        ])
+
+      if (error) throw error
+
+      // Reset dels camps
+      setNom('')
+      setCategoria('')
+      setAdreca('')
+      setTelefon('')
+      setWeb('')
+      setMostrarForm(false)
+      fetchComercos()
+    } catch (err: any) {
+      setErrorMsg(err.message || 'Error desant el comerç local.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   async function handleApprove(id: string) {
     try {
       const { error } = await supabase
@@ -47,7 +96,7 @@ export default function AdminComercPage() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Segur que vols eliminar/rebutjar aquest negoci?')) return
+    if (!confirm('Segur que vols eliminar aquest negoci del directori?')) return
 
     try {
       const { error } = await supabase
@@ -67,23 +116,139 @@ export default function AdminComercPage() {
   const aprovats = comercos.filter(c => c.aprovat)
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 text-xs pb-10">
+      
       {/* Capçalera */}
-      <div>
-        <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Comerç i Autònoms Locals</h1>
-        <p className="text-sm text-neutral-500">Valida, aprova i modera les sol·licituds ciutadanes del directori comercial municipal.</p>
+      <div className="flex justify-between items-center border-b border-neutral-200 pb-4">
+        <div>
+          <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Comerç i Autònoms Locals</h1>
+          <p className="text-sm text-neutral-500 mt-1">Gestiona els comerços, restaurants i autònoms locals en el directori municipal.</p>
+        </div>
+        
+        <button
+          onClick={() => setMostrarForm(!mostrarForm)}
+          className="inline-flex items-center gap-1.5 rounded bg-primary text-neutral-950 px-4 py-2.5 font-bold shadow hover:bg-primary-dark transition-all"
+        >
+          <Plus size={14} />
+          {mostrarForm ? 'Tancar formulari' : 'Afegir Comerç'}
+        </button>
       </div>
 
       {errorMsg && (
-        <div className="bg-red-50 border border-red-200 rounded p-4 text-xs font-bold text-red-600">
+        <div className="bg-red-50 border border-red-200 rounded p-4 font-bold text-red-600">
           {errorMsg}
         </div>
       )}
 
+      {/* Formular d'inserció manual de l'admin */}
+      {mostrarForm && (
+        <form onSubmit={handleAddComerc} className="bg-white border border-neutral-200 rounded-lg p-5 shadow-sm space-y-4 max-w-2xl">
+          <h3 className="font-sans font-bold text-neutral-900 text-sm border-b border-neutral-100 pb-2">
+            Afegir Nou Negoci (Directe)
+          </h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-bold text-neutral-600 uppercase tracking-wider mb-1">
+                Nom del Comerç
+              </label>
+              <input
+                type="text"
+                required
+                value={nom}
+                onChange={(e) => setNom(e.target.value)}
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 focus:border-primary outline-none"
+                placeholder="Ex. Restaurant La Plaça"
+              />
+            </div>
+
+            <div>
+              <label className="block font-bold text-neutral-600 uppercase tracking-wider mb-1">
+                Categoria
+              </label>
+              <input
+                type="text"
+                required
+                value={categoria}
+                onChange={(e) => setCategoria(e.target.value)}
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 focus:border-primary outline-none"
+                placeholder="Ex. Restauració, Moda, Alimentació, Perruqueria..."
+              />
+            </div>
+
+            <div>
+              <label className="block font-bold text-neutral-600 uppercase tracking-wider mb-1">
+                Adreça física
+              </label>
+              <input
+                type="text"
+                value={adreca}
+                onChange={(e) => setAdreca(e.target.value)}
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 focus:border-primary outline-none"
+                placeholder="Ex. Avinguda de S'Agaró, 120"
+              />
+            </div>
+
+            <div>
+              <label className="block font-bold text-neutral-600 uppercase tracking-wider mb-1">
+                Telèfon de contacte
+              </label>
+              <input
+                type="tel"
+                value={telefon}
+                onChange={(e) => setTelefon(e.target.value)}
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 focus:border-primary outline-none"
+                placeholder="Ex. 972 81 80 00"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block font-bold text-neutral-600 uppercase tracking-wider mb-1">
+              Pàgina Web / Xarxes Socials (URL)
+            </label>
+            <input
+              type="url"
+              value={web}
+              onChange={(e) => setWeb(e.target.value)}
+              className="w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 focus:border-primary outline-none font-mono"
+              placeholder="Ex. https://restaurantlaplaca.com"
+            />
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <button
+              type="button"
+              onClick={() => setMostrarForm(false)}
+              className="rounded border border-neutral-200 text-neutral-600 px-4 py-2 font-bold hover:bg-neutral-50"
+            >
+              Cancel·lar
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="rounded bg-primary text-neutral-950 px-5 py-2 font-bold shadow hover:bg-primary-dark transition-colors flex items-center gap-1.5"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="animate-spin" size={13} />
+                  Desant negoci...
+                </>
+              ) : (
+                'Desar i publicar'
+              )}
+            </button>
+          </div>
+        </form>
+      )}
+
       {loading ? (
-        <div className="text-center py-8 text-neutral-400 text-xs">Carregant llista de comerços...</div>
+        <div className="flex items-center justify-center py-20 text-neutral-400">
+          <Loader2 className="animate-spin mr-2" size={24} />
+          <span>Carregant directori comercial...</span>
+        </div>
       ) : (
-        <div className="space-y-10 text-xs">
+        <div className="space-y-10">
           
           {/* 1. COMERÇOS PENDENTS (Moderació) */}
           <div className="space-y-4">
@@ -96,18 +261,18 @@ export default function AdminComercPage() {
             </h3>
 
             {pendents.length === 0 ? (
-              <p className="text-xs text-neutral-400 py-2">No hi ha sol·licituds de comerç pendents de moderació.</p>
+              <p className="text-neutral-400 py-2">No hi ha sol·licituds de comerç pendents de moderació.</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans">
                 {pendents.map((c) => (
                   <div key={c.id} className="bg-white border border-yellow-200 rounded-lg p-5 shadow-sm space-y-4 flex flex-col justify-between">
                     <div className="space-y-2">
                       <div className="flex justify-between items-start gap-2">
-                        <h4 className="font-sans font-bold text-neutral-900 text-sm flex items-center gap-1.5">
+                        <h4 className="font-bold text-neutral-900 text-sm flex items-center gap-1.5 leading-none">
                           <Store size={16} className="text-neutral-400" />
                           {c.nom}
                         </h4>
-                        <span className="bg-yellow-100 text-yellow-800 text-[8px] font-black uppercase tracking-wider rounded px-1.5 py-0.5">
+                        <span className="bg-yellow-100 text-yellow-800 text-[9px] font-black uppercase tracking-wider rounded px-2 py-0.5 shrink-0">
                           {c.categoria}
                         </span>
                       </div>
@@ -128,7 +293,7 @@ export default function AdminComercPage() {
                         {c.web && (
                           <div className="flex items-center gap-1.5">
                             <Globe size={12} className="text-neutral-400" />
-                            <span className="text-primary hover:underline font-mono text-[10px]">{c.web}</span>
+                            <span className="text-primary hover:underline font-mono text-[10px] truncate max-w-[200px]">{c.web}</span>
                           </div>
                         )}
                       </div>
@@ -137,16 +302,16 @@ export default function AdminComercPage() {
                     <div className="flex gap-2 pt-3 border-t border-neutral-100 justify-end">
                       <button
                         onClick={() => handleDelete(c.id)}
-                        className="rounded border border-neutral-200 text-neutral-600 px-3 py-1.5 text-xs font-bold hover:bg-neutral-50 flex items-center gap-1"
+                        className="rounded border border-red-100 text-red-600 px-3 py-1.5 font-bold hover:bg-red-50 flex items-center gap-1"
                       >
-                        Rebutjar
+                        Rebutjar / Eliminar
                       </button>
                       <button
                         onClick={() => handleApprove(c.id)}
-                        className="rounded bg-green-600 text-white px-4.5 py-1.5 text-xs font-bold hover:bg-green-700 flex items-center gap-1 shadow"
+                        className="rounded bg-green-600 text-white px-4 py-1.5 font-bold hover:bg-green-700 flex items-center gap-1 shadow"
                       >
                         <Check size={14} />
-                        Aprovar negoci
+                        Aprovar i Publicar
                       </button>
                     </div>
                   </div>
@@ -166,7 +331,7 @@ export default function AdminComercPage() {
             </h3>
 
             {aprovats.length === 0 ? (
-              <p className="text-xs text-neutral-400 py-2">Encara no s'ha aprovat cap negoci al directori.</p>
+              <p className="text-neutral-400 py-2">Encara no s'ha aprovat cap negoci al directori.</p>
             ) : (
               <div className="bg-white border border-neutral-200 rounded-lg overflow-hidden shadow-sm">
                 <ul className="divide-y divide-neutral-100">
@@ -174,7 +339,7 @@ export default function AdminComercPage() {
                     <li key={c.id} className="p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-neutral-50/20 transition-colors">
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-neutral-900 text-xs flex items-center gap-1">
+                          <h4 className="font-bold text-neutral-900 text-xs flex items-center gap-1 leading-none">
                             <Store size={14} className="text-neutral-400" />
                             {c.nom}
                           </h4>
@@ -209,6 +374,7 @@ export default function AdminComercPage() {
                         onClick={() => handleDelete(c.id)}
                         className="text-neutral-300 hover:text-red-600 p-1.5 transition-colors self-end sm:self-center"
                         aria-label="Eliminar comerç"
+                        title="Eliminar negoci de forma directa"
                       >
                         <Trash2 size={15} />
                       </button>
