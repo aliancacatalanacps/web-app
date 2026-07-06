@@ -63,6 +63,7 @@ export default async function NoticiesPage({ searchParams }: PageProps) {
       .from('noticies')
       .select('*')
       .eq('publicat', true)
+      .eq('arxivat', false)
       .order('data_publicacio', { ascending: false })
 
     if (tipusFiltre && tipusFiltre !== 'tot') {

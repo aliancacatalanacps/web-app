@@ -20,6 +20,7 @@ interface FormValues {
   data_publicacio: string
   link_extern: string
   publicat: boolean
+  arxivat: boolean
 }
 
 type MocioInput = Omit<Mocio, 'id' | 'noticia_id'>
@@ -72,6 +73,7 @@ export default function NoticiaForm({ initialData = null, initialFotos = [] }: N
         : new Date().toISOString().substring(0, 16),
       link_extern: initialData?.link_extern || '',
       publicat: initialData ? initialData.publicat : true,
+      arxivat: initialData ? initialData.arxivat : false,
     }
   })
 
@@ -133,7 +135,8 @@ export default function NoticiaForm({ initialData = null, initialFotos = [] }: N
         data_publicacio: new Date(values.data_publicacio).toISOString(),
         imatge_portada: portadaUrl || null,
         link_extern: tipus === 'premsa' ? values.link_extern : null,
-        publicat: values.publicat
+        publicat: values.publicat,
+        arxivat: values.arxivat
       }
 
       let noticiaId = initialData?.id
@@ -528,8 +531,8 @@ export default function NoticiaForm({ initialData = null, initialFotos = [] }: N
           </div>
         )}
 
-        {/* Toggle Publicat */}
-        <div className="border-t border-neutral-100 pt-6">
+        {/* Toggle Publicat & Arxivat */}
+        <div className="border-t border-neutral-100 pt-6 flex flex-col gap-4">
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <input
               type="checkbox"
@@ -538,6 +541,17 @@ export default function NoticiaForm({ initialData = null, initialFotos = [] }: N
             />
             <span className="text-sm font-semibold text-neutral-700">
               Publicat a la web immediatament (si es desmarca quedarà com a esborrany)
+            </span>
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              {...register('arxivat')}
+              className="accent-primary h-4 w-4 rounded border-neutral-300"
+            />
+            <span className="text-sm font-semibold text-neutral-700">
+              Arxivar publicació (S'oculta automàticament de la web pública sense esborrar-se de la base de dades)
             </span>
           </label>
         </div>

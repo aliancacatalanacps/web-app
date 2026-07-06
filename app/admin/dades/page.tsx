@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { DadesMunicipi } from '@/lib/types'
-import { Plus, Trash2, TrendingUp, Calendar, Landmark } from 'lucide-react'
+import { Plus, Trash2, TrendingUp, Calendar, Landmark, Image as ImageIcon } from 'lucide-react'
+import FotoUploader from '@/components/admin/FotoUploader'
 
 export default function AdminDadesPage() {
   const [indicadors, setIndicadors] = useState<DadesMunicipi[]>([])
@@ -16,6 +17,7 @@ export default function AdminDadesPage() {
   const [unitat, setUnitat] = useState('')
   const [font, setFont] = useState('')
   const [dataActualitzacio, setDataActualitzacio] = useState(new Date().toISOString().split('T')[0])
+  const [imatgeUrl, setImatgeUrl] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
 
   const supabase = createClient()
@@ -55,7 +57,8 @@ export default function AdminDadesPage() {
             valor: valor.trim(),
             unitat: unitat.trim() || null,
             font: font.trim(),
-            data_actualitzacio: dataActualitzacio
+            data_actualitzacio: dataActualitzacio,
+            imatge_url: imatgeUrl || null
           }
         ])
 
@@ -66,6 +69,7 @@ export default function AdminDadesPage() {
       setValor('')
       setUnitat('')
       setFont('')
+      setImatgeUrl(null)
       fetchIndicadors()
     } catch (err: any) {
       setErrorMsg(err.message || 'Error guardant indicador.')
@@ -91,7 +95,7 @@ export default function AdminDadesPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 text-xs pb-10">
       {/* Capçalera */}
       <div>
         <h1 className="text-2xl font-black text-neutral-900 tracking-tight">Dades Municipals</h1>
@@ -189,10 +193,17 @@ export default function AdminDadesPage() {
               />
             </div>
 
+            {/* Pujador d'imatges addicional */}
+            <FotoUploader
+              label="Foto / Infografia de l'indicador (opcional)"
+              defaultUrl={imatgeUrl}
+              onUploadSuccess={(url) => setImatgeUrl(url)}
+            />
+
             <button
               type="submit"
               disabled={saving}
-              className="w-full rounded bg-primary text-white py-2.5 text-xs font-bold shadow hover:bg-primary-dark transition-colors flex items-center justify-center"
+              className="w-full rounded bg-primary text-neutral-950 py-2.5 text-xs font-bold shadow hover:bg-primary-dark transition-colors flex items-center justify-center"
             >
               <span>{saving ? 'Guardant...' : 'Afegir indicador'}</span>
             </button>
@@ -214,10 +225,23 @@ export default function AdminDadesPage() {
             <ul className="divide-y divide-neutral-100">
               {indicadors.map((ind) => (
                 <li key={ind.id} className="p-4 flex items-center justify-between gap-4 hover:bg-neutral-50/50 transition-colors text-xs">
-                  <div className="space-y-0.5 max-w-sm">
-                    <h4 className="font-bold text-neutral-900">{ind.nom_indicador}</h4>
-                    <div className="text-[10px] text-neutral-400 font-medium">
-                      Font: <span className="text-neutral-500 font-semibold">{ind.font}</span>
+                  <div className="flex items-center gap-3 min-w-0">
+                    {/* Miniatura si té imatge */}
+                    {ind.imatge_url ? (
+                      <div className="h-10 w-10 rounded overflow-hidden border border-neutral-200 shrink-0">
+                        <img src={ind.imatge_url} alt={ind.nom_indicador} className="h-full w-full object-cover" />
+                      </div>
+                    ) : (
+                      <div className="h-10 w-10 rounded bg-neutral-50 border border-neutral-200 shrink-0 flex items-center justify-center text-neutral-300">
+                        <ImageIcon size={16} />
+                      </div>
+                    )}
+
+                    <div className="space-y-0.5 min-w-0 truncate">
+                      <h4 className="font-bold text-neutral-900 truncate">{ind.nom_indicador}</h4>
+                      <div className="text-[10px] text-neutral-400 font-medium">
+                        Font: <span className="text-neutral-500 font-semibold">{ind.font}</span>
+                      </div>
                     </div>
                   </div>
 

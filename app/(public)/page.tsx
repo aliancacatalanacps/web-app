@@ -107,6 +107,7 @@ export default async function HomePage() {
       .from('noticies')
       .select('*')
       .eq('publicat', true)
+      .eq('arxivat', false)
       .order('data_publicacio', { ascending: false })
       .limit(3)
 

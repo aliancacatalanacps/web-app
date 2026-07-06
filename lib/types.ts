@@ -10,6 +10,7 @@ export interface Noticia {
   imatge_portada: string | null
   link_extern: string | null
   publicat: boolean
+  arxivat?: boolean
   created_at: string
 }
 
@@ -54,6 +55,7 @@ export interface TransparenciaEconomica {
   data: string
   descripcio: string | null
   document_url: string | null
+  imatge_url?: string | null
 }
 
 export interface DadesMunicipi {
@@ -63,6 +65,7 @@ export interface DadesMunicipi {
   unitat: string | null
   font: string
   data_actualitzacio: string
+  imatge_url?: string | null
 }
 
 export interface Mocio {
@@ -91,6 +94,7 @@ export interface Compromis {
   descripcio: string | null
   estat: 'pendent' | 'en_curs' | 'complert' | 'rebutjat'
   data_actualitzacio: string
+  imatge_url?: string | null
 }
 
 export interface ComercLocal {
@@ -101,6 +105,7 @@ export interface ComercLocal {
   telefon: string | null
   web: string | null
   aprovat: boolean
+  imatge_url?: string | null
   created_at: string
 }
 

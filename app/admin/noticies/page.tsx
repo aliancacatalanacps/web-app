@@ -74,6 +74,12 @@ export default async function AdminNoticiesListPage() {
                             Esborrany
                           </span>
                         )}
+
+                        {n.arxivat && (
+                          <span className="bg-red-50 text-red-700 text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded border border-red-200">
+                            Arxivat
+                          </span>
+                        )}
                       </div>
 
                       {/* Títol */}

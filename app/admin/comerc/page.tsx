@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { ComercLocal } from '@/lib/types'
-import { Store, Check, Trash2, Clock, MapPin, Phone, Globe, Plus, Loader2 } from 'lucide-react'
+import { Store, Check, Trash2, Clock, MapPin, Phone, Globe, Plus, Loader2, Image as ImageIcon } from 'lucide-react'
+import FotoUploader from '@/components/admin/FotoUploader'
 
 export default function AdminComercPage() {
   const [comercos, setComercos] = useState<ComercLocal[]>([])
@@ -16,6 +17,7 @@ export default function AdminComercPage() {
   const [adreca, setAdreca] = useState('')
   const [telefon, setTelefon] = useState('')
   const [web, setWeb] = useState('')
+  const [imatgeUrl, setImatgeUrl] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [mostrarForm, setMostrarForm] = useState(false)
 
@@ -60,7 +62,8 @@ export default function AdminComercPage() {
             adreca: adreca.trim() || null,
             telefon: telefon.trim() || null,
             web: web.trim() || null,
-            aprovat: true // Un comerç afegit directament per l'admin s'aprova a l'instant
+            aprovat: true, // Un comerç afegit directament per l'admin s'aprova a l'instant
+            imatge_url: imatgeUrl || null
           }
         ])
 
@@ -72,6 +75,7 @@ export default function AdminComercPage() {
       setAdreca('')
       setTelefon('')
       setWeb('')
+      setImatgeUrl(null)
       setMostrarForm(false)
       fetchComercos()
     } catch (err: any) {
@@ -142,8 +146,8 @@ export default function AdminComercPage() {
 
       {/* Formular d'inserció manual de l'admin */}
       {mostrarForm && (
-        <form onSubmit={handleAddComerc} className="bg-white border border-neutral-200 rounded-lg p-5 shadow-sm space-y-4 max-w-2xl">
-          <h3 className="font-sans font-bold text-neutral-900 text-sm border-b border-neutral-100 pb-2">
+        <form onSubmit={handleAddComerc} className="bg-white border border-neutral-200 rounded-lg p-5 shadow-sm space-y-4 max-w-2xl font-sans">
+          <h3 className="font-bold text-neutral-900 text-sm border-b border-neutral-100 pb-2">
             Afegir Nou Negoci (Directe)
           </h3>
 
@@ -157,7 +161,7 @@ export default function AdminComercPage() {
                 required
                 value={nom}
                 onChange={(e) => setNom(e.target.value)}
-                className="w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 focus:border-primary outline-none"
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-xs text-neutral-900 focus:border-primary outline-none"
                 placeholder="Ex. Restaurant La Plaça"
               />
             </div>
@@ -171,8 +175,8 @@ export default function AdminComercPage() {
                 required
                 value={categoria}
                 onChange={(e) => setCategoria(e.target.value)}
-                className="w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 focus:border-primary outline-none"
-                placeholder="Ex. Restauració, Moda, Alimentació, Perruqueria..."
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-xs text-neutral-900 focus:border-primary outline-none"
+                placeholder="Ex. Restauració, Moda, Alimentació..."
               />
             </div>
 
@@ -184,7 +188,7 @@ export default function AdminComercPage() {
                 type="text"
                 value={adreca}
                 onChange={(e) => setAdreca(e.target.value)}
-                className="w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 focus:border-primary outline-none"
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-xs text-neutral-900 focus:border-primary outline-none"
                 placeholder="Ex. Avinguda de S'Agaró, 120"
               />
             </div>
@@ -197,7 +201,7 @@ export default function AdminComercPage() {
                 type="tel"
                 value={telefon}
                 onChange={(e) => setTelefon(e.target.value)}
-                className="w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 focus:border-primary outline-none"
+                className="w-full rounded border border-neutral-300 px-3 py-2 text-xs text-neutral-900 focus:border-primary outline-none"
                 placeholder="Ex. 972 81 80 00"
               />
             </div>
@@ -211,10 +215,17 @@ export default function AdminComercPage() {
               type="url"
               value={web}
               onChange={(e) => setWeb(e.target.value)}
-              className="w-full rounded border border-neutral-300 px-3 py-2 text-neutral-900 focus:border-primary outline-none font-mono"
+              className="w-full rounded border border-neutral-300 px-3 py-2 text-xs text-neutral-900 focus:border-primary outline-none font-mono"
               placeholder="Ex. https://restaurantlaplaca.com"
             />
           </div>
+
+          {/* Pujada d'imatge de la botiga */}
+          <FotoUploader
+            label="Foto de la façana o local del comerç (opcional)"
+            defaultUrl={imatgeUrl}
+            onUploadSuccess={(url) => setImatgeUrl(url)}
+          />
 
           <div className="flex justify-end gap-2 pt-2">
             <button
@@ -248,7 +259,7 @@ export default function AdminComercPage() {
           <span>Carregant directori comercial...</span>
         </div>
       ) : (
-        <div className="space-y-10">
+        <div className="space-y-10 font-sans">
           
           {/* 1. COMERÇOS PENDENTS (Moderació) */}
           <div className="space-y-4">
@@ -263,18 +274,30 @@ export default function AdminComercPage() {
             {pendents.length === 0 ? (
               <p className="text-neutral-400 py-2">No hi ha sol·licituds de comerç pendents de moderació.</p>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {pendents.map((c) => (
                   <div key={c.id} className="bg-white border border-yellow-200 rounded-lg p-5 shadow-sm space-y-4 flex flex-col justify-between">
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-start gap-2">
-                        <h4 className="font-bold text-neutral-900 text-sm flex items-center gap-1.5 leading-none">
-                          <Store size={16} className="text-neutral-400" />
-                          {c.nom}
-                        </h4>
-                        <span className="bg-yellow-100 text-yellow-800 text-[9px] font-black uppercase tracking-wider rounded px-2 py-0.5 shrink-0">
-                          {c.categoria}
-                        </span>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        {/* Imatge preview */}
+                        {c.imatge_url ? (
+                          <div className="h-10 w-10 rounded overflow-hidden border border-neutral-200 shrink-0">
+                            <img src={c.imatge_url} alt={c.nom} className="h-full w-full object-cover" />
+                          </div>
+                        ) : (
+                          <div className="h-10 w-10 rounded bg-neutral-50 border border-neutral-200 shrink-0 flex items-center justify-center text-neutral-300">
+                            <ImageIcon size={16} />
+                          </div>
+                        )}
+
+                        <div className="min-w-0">
+                          <h4 className="font-bold text-neutral-900 text-xs sm:text-sm leading-none truncate">
+                            {c.nom}
+                          </h4>
+                          <span className="inline-block bg-yellow-50 text-yellow-700 border border-yellow-200 text-[8px] font-black uppercase tracking-wider rounded px-1.5 py-0.5 mt-1">
+                            {c.categoria}
+                          </span>
+                        </div>
                       </div>
 
                       <div className="space-y-1 text-neutral-500 font-medium leading-relaxed">
@@ -337,36 +360,48 @@ export default function AdminComercPage() {
                 <ul className="divide-y divide-neutral-100">
                   {aprovats.map((c) => (
                     <li key={c.id} className="p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-neutral-50/20 transition-colors">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-neutral-900 text-xs flex items-center gap-1 leading-none">
-                            <Store size={14} className="text-neutral-400" />
-                            {c.nom}
-                          </h4>
-                          <span className="text-[8px] font-black text-neutral-400 bg-neutral-100 rounded px-1.5 py-0.5 uppercase tracking-wider">
-                            {c.categoria}
-                          </span>
-                        </div>
+                      <div className="flex items-center gap-3 min-w-0">
+                        {/* Miniatura si té foto */}
+                        {c.imatge_url ? (
+                          <div className="h-10 w-10 rounded overflow-hidden border border-neutral-200 shrink-0">
+                            <img src={c.imatge_url} alt={c.nom} className="h-full w-full object-cover" />
+                          </div>
+                        ) : (
+                          <div className="h-10 w-10 rounded bg-neutral-50 border border-neutral-200 shrink-0 flex items-center justify-center text-neutral-300">
+                            <ImageIcon size={16} />
+                          </div>
+                        )}
 
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-neutral-400 font-medium">
-                          {c.adreca && (
-                            <span className="flex items-center gap-1">
-                              <MapPin size={10} />
-                              {c.adreca}
+                        <div className="space-y-0.5 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-bold text-neutral-900 text-xs flex items-center gap-1 leading-none">
+                              {c.nom}
+                            </h4>
+                            <span className="text-[8px] font-black text-neutral-400 bg-neutral-100 rounded px-1.5 py-0.5 uppercase tracking-wider">
+                              {c.categoria}
                             </span>
-                          )}
-                          {c.telefon && (
-                            <span className="flex items-center gap-1">
-                              <Phone size={10} />
-                              {c.telefon}
-                            </span>
-                          )}
-                          {c.web && (
-                            <a href={c.web} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-primary hover:underline font-mono">
-                              <Globe size={10} />
-                              {c.web}
-                            </a>
-                          )}
+                          </div>
+
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-neutral-400 font-medium">
+                            {c.adreca && (
+                              <span className="flex items-center gap-1">
+                                <MapPin size={10} />
+                                {c.adreca}
+                              </span>
+                            )}
+                            {c.telefon && (
+                              <span className="flex items-center gap-1">
+                                <Phone size={10} />
+                                {c.telefon}
+                              </span>
+                            )}
+                            {c.web && (
+                              <a href={c.web} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-primary hover:underline font-mono">
+                                <Globe size={10} />
+                                {c.web}
+                              </a>
+                            )}
+                          </div>
                         </div>
                       </div>
 
