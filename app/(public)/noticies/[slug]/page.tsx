@@ -1,10 +1,10 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Calendar, ExternalLink, Share2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import GaleriaGrid from '@/components/public/GaleriaGrid'
-import { Noticia, NoticiaFoto } from '@/lib/types'
+import { Noticia, NoticiaFoto, Mocio } from '@/lib/types'
+import { CheckCircle2, XCircle, AlertCircle as AlertIcon, Calendar, ArrowLeft, ExternalLink, Share2 } from 'lucide-react'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -40,7 +40,7 @@ const fallbackNoticies: Noticia[] = [
     tipus: 'noticia',
     titol: "David Schelvis proposa un pla de dinamització per recolzar les entitats, penyes i associacions culturals de Castell i Platja d'Aro",
     slug: 'david-schelvis-pla-dinamitzacio-entitats-locals',
-    cos: "El representant de l'equip local proposa simplificar la burocràcia municipal i crear noves línies de suport directe per reactivar l'activitat de les associacions esportives i de lleure que formen la identitat del nostre municipi.\n\nHem recollit propostes de diverses entitats locals per dissenyar un suport econòmic flexible que els permeti seguir dinamitzant Castell-Platja d'Aro i S'Agaró.",
+    cos: "El representant de l'equip local proposa simplificar la burocràcia municipal i crear noves línies de suport directe per reactivar l'activitat de les associacions esportives i de lleure que formen la identitat del nostre municipi.\n\nHem recollit propostes de diverses entitats locals per dissenyar un suport econòmic flexible que os permeti seguir dinamitzant Castell-Platja d'Aro i S'Agaró.",
     data_publicacio: new Date(Date.now() - 172800000).toISOString(),
     imatge_portada: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
     link_extern: null,
@@ -54,6 +54,29 @@ const fallbackFotos: Record<string, NoticiaFoto[]> = {
     { id: 'pho1', noticia_id: 'f3', url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80', ordre: 1 },
     { id: 'pho2', noticia_id: 'f3', url: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80', ordre: 2 },
     { id: 'pho3', noticia_id: 'f3', url: 'https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=800&q=80', ordre: 3 },
+  ]
+}
+
+const fallbackMocions: Record<string, Mocio[]> = {
+  'reforc-seguretat-pla-civisme-estiu': [
+    {
+      id: 'mo1',
+      noticia_id: 'f1',
+      titol: "Moció per incrementar els recursos i patrulles nocturnes de la Policia Local a Castell-Platja d'Aro",
+      resultat: 'rebutjada',
+      vots_favor: 6,
+      vots_contra: 11,
+      abstencions: 0
+    },
+    {
+      id: 'mo2',
+      noticia_id: 'f1',
+      titol: "Moció per impulsar campanyes informatives de civisme a la zona d'oci nocturn",
+      resultat: 'aprovada',
+      vots_favor: 17,
+      vots_contra: 0,
+      abstencions: 0
+    }
   ]
 }
 
@@ -75,7 +98,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     if (data) noticia = data
   } catch (e) {
-    // ignorat, farem servir el fallback per a les metadades
+    // ignorat
   }
 
   if (!noticia) {
@@ -108,6 +131,7 @@ export default async function NoticiaDetailPage({ params }: PageProps) {
 
   let noticia: Noticia | null = null
   let fotos: NoticiaFoto[] = []
+  let mocions: Mocio[] = []
 
   try {
     const supabase = await createClient()
@@ -131,6 +155,14 @@ export default async function NoticiaDetailPage({ params }: PageProps) {
         .order('ordre', { ascending: true })
 
       if (dbFotos) fotos = dbFotos
+
+      // Obtenir mocions associades
+      const { data: dbMocions } = await supabase
+        .from('mocions')
+        .select('*')
+        .eq('noticia_id', dbNoticia.id)
+
+      if (dbMocions) mocions = dbMocions
     }
   } catch (error) {
     console.error('Error carregant detall de notícia, intentant fallback', error)
@@ -144,6 +176,7 @@ export default async function NoticiaDetailPage({ params }: PageProps) {
     }
     noticia = found
     fotos = fallbackFotos[slug] || []
+    mocions = fallbackMocions[slug] || []
   }
 
   const formattedDate = new Date(noticia.data_publicacio).toLocaleDateString('ca', {
@@ -227,7 +260,97 @@ export default async function NoticiaDetailPage({ params }: PageProps) {
 
         {/* Galeria de fotos si tipus és galeria o en conté */}
         {fotos.length > 0 && (
-          <GaleriaGrid fotos={fotos} />
+          <div className="mt-8 border-t border-neutral-200 pt-8">
+            <GaleriaGrid fotos={fotos} />
+          </div>
+        )}
+
+        {/* Bloc especial de Mocions del Ple si n'hi ha */}
+        {mocions.length > 0 && (
+          <div className="mt-12 border-t border-neutral-200 pt-8 space-y-6">
+            <h3 className="font-sans font-black text-xl text-neutral-900 tracking-tight flex items-center gap-2">
+              <span className="h-5 w-1 bg-primary inline-block rounded"></span>
+              Mocions i Votacions en aquest Ple
+            </h3>
+            <p className="text-xs text-neutral-500 max-w-xl leading-relaxed">
+              Detall de les propostes i resolucions presentades pel nostre grup municipal en aquesta sessió ordinària del consistori de Platja d'Aro.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              {mocions.map((mo) => {
+                const totalVots = mo.vots_favor + mo.vots_contra + mo.abstencions
+                const pctFavor = totalVots > 0 ? (mo.vots_favor / totalVots) * 100 : 0
+                const pctContra = totalVots > 0 ? (mo.vots_contra / totalVots) * 100 : 0
+                const pctAbstencions = totalVots > 0 ? (mo.abstencions / totalVots) * 100 : 0
+
+                return (
+                  <div key={mo.id} className="border border-neutral-200 rounded-lg p-5 bg-neutral-50 shadow-sm flex flex-col justify-between">
+                    <div>
+                      <div className="flex justify-between items-start gap-3 mb-3">
+                        <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[9px] font-black uppercase tracking-wider ${
+                          mo.resultat === 'aprovada'
+                            ? 'bg-green-100 text-green-800'
+                            : mo.resultat === 'rebutjada'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-neutral-200 text-neutral-800'
+                        }`}>
+                          {mo.resultat === 'aprovada' ? (
+                            <CheckCircle2 size={10} />
+                          ) : mo.resultat === 'rebutjada' ? (
+                            <XCircle size={10} />
+                          ) : (
+                            <AlertIcon size={10} />
+                          )}
+                          {mo.resultat}
+                        </span>
+                      </div>
+                      
+                      <h4 className="font-sans font-bold text-neutral-900 text-sm leading-snug mb-4">
+                        {mo.titol}
+                      </h4>
+                    </div>
+
+                    <div className="space-y-2 pt-3 border-t border-neutral-200/60">
+                      {/* Favor */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[10px] font-bold">
+                          <span className="text-neutral-500">A favor</span>
+                          <span className="text-neutral-700">{mo.vots_favor} vots</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden">
+                          <div className="h-full bg-green-500 rounded-full" style={{ width: `${pctFavor}%` }}></div>
+                        </div>
+                      </div>
+
+                      {/* Contra */}
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[10px] font-bold">
+                          <span className="text-neutral-500">En contra</span>
+                          <span className="text-neutral-700">{mo.vots_contra} vots</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden">
+                          <div className="h-full bg-red-500 rounded-full" style={{ width: `${pctContra}%` }}></div>
+                        </div>
+                      </div>
+
+                      {/* Abstencions */}
+                      {mo.abstencions > 0 && (
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-[10px] font-bold">
+                            <span className="text-neutral-500">Abstencions</span>
+                            <span className="text-neutral-700">{mo.abstencions} vots</span>
+                          </div>
+                          <div className="h-1.5 w-full bg-neutral-200 rounded-full overflow-hidden">
+                            <div className="h-full bg-neutral-400 rounded-full" style={{ width: `${pctAbstencions}%` }}></div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
         )}
         
       </div>

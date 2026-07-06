@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
-import { Newspaper, Image as ImageIcon, FileText, Plus, X, ArrowLeft, Save, Trash } from 'lucide-react'
+import { Newspaper, Image as ImageIcon, FileText, Plus, X, ArrowLeft, Save, Trash, BarChart2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import FotoUploader from './FotoUploader'
-import { Noticia, TipusNoticia } from '@/lib/types'
+import { Noticia, TipusNoticia, Mocio } from '@/lib/types'
 
 interface NoticiaFormProps {
   initialData?: Noticia | null
@@ -22,15 +22,31 @@ interface FormValues {
   publicat: boolean
 }
 
+type MocioInput = Omit<Mocio, 'id' | 'noticia_id'>
+
 export default function NoticiaForm({ initialData = null, initialFotos = [] }: NoticiaFormProps) {
   const router = useRouter()
   const [tipus, setTipus] = useState<TipusNoticia>(initialData?.tipus || 'noticia')
   const [portadaUrl, setPortadaUrl] = useState<string | null>(initialData?.imatge_portada || null)
   const [galeriaUrls, setGaleriaUrls] = useState<string[]>(initialFotos)
+  const [mocions, setMocions] = useState<MocioInput[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
   const supabase = createClient()
+
+  // Carregar mocions de forma dinàmica en mode edició
+  useEffect(() => {
+    if (initialData && initialData.tipus === 'noticia') {
+      supabase
+        .from('mocions')
+        .select('*')
+        .eq('noticia_id', initialData.id)
+        .then(({ data }) => {
+          if (data) setMocions(data)
+        })
+    }
+  }, [initialData])
 
   // Helper per a generar slug
   function slugify(text: string) {
@@ -79,6 +95,29 @@ export default function NoticiaForm({ initialData = null, initialFotos = [] }: N
 
   function handleRemoveGaleria(idxToRemove: number) {
     setGaleriaUrls((prev) => prev.filter((_, idx) => idx !== idxToRemove))
+  }
+
+  // Gestió de mocions locals
+  function handleAddMocio() {
+    setMocions((prev) => [
+      ...prev,
+      { titol: '', resultat: 'aprovada', vots_favor: 0, vots_contra: 0, abstencions: 0 }
+    ])
+  }
+
+  function handleRemoveMocio(idx: number) {
+    setMocions((prev) => prev.filter((_, i) => i !== idx))
+  }
+
+  function handleMocioChange(idx: number, field: keyof MocioInput, val: any) {
+    setMocions((prev) =>
+      prev.map((mo, i) => {
+        if (i === idx) {
+          return { ...mo, [field]: val }
+        }
+        return mo
+      })
+    )
   }
 
   async function onSubmit(values: FormValues) {
@@ -138,6 +177,31 @@ export default function NoticiaForm({ initialData = null, initialFotos = [] }: N
             .insert(fotosPayload)
 
           if (fotosError) throw fotosError
+        }
+      }
+
+      // Gestionar mocions associades
+      if (noticiaId && tipus === 'noticia') {
+        // Esborrar anteriors si estem en mode edició
+        if (initialData) {
+          await supabase.from('mocions').delete().eq('noticia_id', noticiaId)
+        }
+
+        if (mocions.length > 0) {
+          const mocionsPayload = mocions.map(mo => ({
+            noticia_id: noticiaId,
+            titol: mo.titol,
+            resultat: mo.resultat,
+            vots_favor: mo.vots_favor || 0,
+            vots_contra: mo.vots_contra || 0,
+            abstencions: mo.abstencions || 0
+          }))
+
+          const { error: mocionsError } = await supabase
+            .from('mocions')
+            .insert(mocionsPayload)
+
+          if (mocionsError) throw mocionsError
         }
       }
 
@@ -353,6 +417,114 @@ export default function NoticiaForm({ initialData = null, initialFotos = [] }: N
               label="Afegeix una foto a la galeria"
               onUploadSuccess={handleGaleriaUpload}
             />
+          </div>
+        )}
+
+        {/* Secció de Mocions (Fase 3 - només si és de tipus noticia plenari) */}
+        {tipus === 'noticia' && (
+          <div className="border-t border-neutral-100 pt-6 space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="font-sans font-bold text-sm text-neutral-900 flex items-center gap-1.5">
+                <BarChart2 size={16} className="text-primary" />
+                Mocions presentades en aquest Ple
+              </h3>
+              <button
+                type="button"
+                onClick={handleAddMocio}
+                className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:underline"
+              >
+                + Afegir moció
+              </button>
+            </div>
+
+            {mocions.length === 0 ? (
+              <p className="text-xs text-neutral-400">No hi ha mocions vinculades a aquesta publicació.</p>
+            ) : (
+              <div className="space-y-4">
+                {mocions.map((mo, idx) => (
+                  <div key={idx} className="border border-neutral-200 rounded p-4 bg-neutral-50/50 space-y-3 relative text-xs">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveMocio(idx)}
+                      className="absolute top-2 right-2 text-neutral-400 hover:text-red-600 transition-colors"
+                      aria-label="Eliminar moció"
+                    >
+                      <X size={16} />
+                    </button>
+
+                    <div>
+                      <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">
+                        Títol de la moció *
+                      </label>
+                      <input
+                        type="text"
+                        value={mo.titol}
+                        onChange={(e) => handleMocioChange(idx, 'titol', e.target.value)}
+                        placeholder="Ex: Moció per a la regulació del soroll"
+                        className="w-full rounded border border-neutral-200 px-3 py-2 text-xs text-neutral-900 bg-white focus:border-primary outline-none transition-colors"
+                        required
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+                      <div>
+                        <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">
+                          Resultat
+                        </label>
+                        <select
+                          value={mo.resultat}
+                          onChange={(e) => handleMocioChange(idx, 'resultat', e.target.value)}
+                          className="w-full rounded border border-neutral-200 px-3 py-2 text-xs text-neutral-900 bg-white focus:border-primary outline-none transition-colors"
+                        >
+                          <option value="aprovada">Aprovada</option>
+                          <option value="rebutjada">Rebutjada</option>
+                          <option value="retirada">Retirada</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">
+                          Vots Favor
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={mo.vots_favor}
+                          onChange={(e) => handleMocioChange(idx, 'vots_favor', parseInt(e.target.value) || 0)}
+                          className="w-full rounded border border-neutral-200 px-3 py-2 text-xs text-neutral-900 bg-white focus:border-primary outline-none transition-colors"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">
+                          Vots Contra
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={mo.vots_contra}
+                          onChange={(e) => handleMocioChange(idx, 'vots_contra', parseInt(e.target.value) || 0)}
+                          className="w-full rounded border border-neutral-200 px-3 py-2 text-xs text-neutral-900 bg-white focus:border-primary outline-none transition-colors"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[10px] font-bold text-neutral-500 uppercase tracking-wider mb-1">
+                          Abstencions
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={mo.abstencions}
+                          onChange={(e) => handleMocioChange(idx, 'abstencions', parseInt(e.target.value) || 0)}
+                          className="w-full rounded border border-neutral-200 px-3 py-2 text-xs text-neutral-900 bg-white focus:border-primary outline-none transition-colors"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

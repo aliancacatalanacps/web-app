@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import ButlletiForm from './ButlletiForm'
 
 // Icones SVG per evitar problemes d'importació amb versions de lucide-react
 function InstagramIcon({ className }: { className?: string }) {
@@ -31,7 +32,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-neutral-200 bg-neutral-50 py-12 text-neutral-600">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Logo i Descripció */}
           <div className="flex flex-col space-y-4">
             <div className="flex items-center gap-3">
@@ -71,7 +72,7 @@ export default function Footer() {
           <div className="flex flex-col space-y-4">
             <h4 className="font-semibold text-sm text-neutral-900 uppercase tracking-wider">Contacta'ns</h4>
             <p className="text-sm text-neutral-500">
-              Correu: <a href="mailto:info@platjadaro.aliancacatalana.cat" className="hover:text-primary">platjadaro@aliancacatalana.cat</a>
+              Correu: <a href="mailto:platjadaro@aliancacatalana.cat" className="hover:text-primary">platjadaro@aliancacatalana.cat</a>
             </p>
             <div className="flex items-center gap-4 text-neutral-500 pt-2">
               <a
@@ -102,6 +103,11 @@ export default function Footer() {
                 <TwitterIcon />
               </a>
             </div>
+          </div>
+
+          {/* Formulari Butlletí */}
+          <div>
+            <ButlletiForm />
           </div>
         </div>
 

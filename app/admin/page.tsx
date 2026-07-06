@@ -1,12 +1,25 @@
 import Link from 'next/link'
-import { Plus, FileText, Users, Mail, AlertTriangle, ArrowRight } from 'lucide-react'
+import {
+  Plus,
+  FileText,
+  Users,
+  Mail,
+  AlertTriangle,
+  ArrowRight,
+  MailQuestion,
+  Landmark,
+  TrendingUp,
+  HelpCircle,
+  ShieldCheck,
+  Store
+} from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Noticia, Contacte } from '@/lib/types'
 
 export const revalidate = 0 // Evitar cache per a les dades de l'admin
 
 export default async function AdminDashboardPage() {
-  let totals = { noticies: 0, membres: 0, contactes: 0 }
+  let totals = { noticies: 0, membres: 0, contactes: 0, butlleti: 0, preguntesPendents: 0, comercosPendents: 0 }
   let contactesRecents: Contacte[] = []
   let noticiesRecents: Noticia[] = []
   let isDbConfigured = true
@@ -14,7 +27,7 @@ export default async function AdminDashboardPage() {
   try {
     const supabase = await createClient()
 
-    // 1. Comptadors
+    // 1. Comptadors existents
     const { count: countNoticies } = await supabase
       .from('noticies')
       .select('*', { count: 'exact', head: true })
@@ -27,13 +40,31 @@ export default async function AdminDashboardPage() {
       .from('contactes')
       .select('*', { count: 'exact', head: true })
 
+    // 2. Comptadors de Fases 2, 4 i 5
+    const { count: countButlleti } = await supabase
+      .from('butlleti_subscriptors')
+      .select('*', { count: 'exact', head: true })
+
+    const { count: countPreguntes } = await supabase
+      .from('preguntes_ciutadanes')
+      .select('*', { count: 'exact', head: true })
+      .eq('respost', false)
+
+    const { count: countComercos } = await supabase
+      .from('comerc_local')
+      .select('*', { count: 'exact', head: true })
+      .eq('aprovat', false)
+
     totals = {
       noticies: countNoticies || 0,
       membres: countMembres || 0,
-      contactes: countContactes || 0
+      contactes: countContactes || 0,
+      butlleti: countButlleti || 0,
+      preguntesPendents: countPreguntes || 0,
+      comercosPendents: countComercos || 0
     }
 
-    // 2. Notícies recents
+    // 3. Notícies recents
     const { data: dbNoticies } = await supabase
       .from('noticies')
       .select('*')
@@ -42,7 +73,7 @@ export default async function AdminDashboardPage() {
 
     if (dbNoticies) noticiesRecents = dbNoticies
 
-    // 3. Contactes recents (no llegits primer)
+    // 4. Contactes recents (no llegits primer)
     const { data: dbContactes } = await supabase
       .from('contactes')
       .select('*')
@@ -58,7 +89,7 @@ export default async function AdminDashboardPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 pb-10">
       {/* Capçalera del Dashboard */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-neutral-200 pb-6">
         <div>
@@ -88,35 +119,78 @@ export default async function AdminDashboardPage() {
       )}
 
       {/* Grid de Targetes de Resum */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="bg-white border border-neutral-200 rounded-lg p-6 flex items-center justify-between shadow-sm">
-          <div>
-            <span className="block text-xs font-bold text-neutral-400 uppercase tracking-wider">Notícies</span>
-            <span className="font-sans font-black text-3xl text-neutral-900 mt-1 block">{totals.noticies}</span>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded bg-primary/5 text-primary border border-primary/10">
-            <FileText size={22} />
-          </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+        <div className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col justify-between shadow-sm">
+          <span className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Notícies</span>
+          <span className="font-sans font-black text-2xl text-neutral-900 mt-2">{totals.noticies}</span>
         </div>
 
-        <div className="bg-white border border-neutral-200 rounded-lg p-6 flex items-center justify-between shadow-sm">
-          <div>
-            <span className="block text-xs font-bold text-neutral-400 uppercase tracking-wider">Equip</span>
-            <span className="font-sans font-black text-3xl text-neutral-900 mt-1 block">{totals.membres}</span>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded bg-primary/5 text-primary border border-primary/10">
-            <Users size={22} />
-          </div>
+        <div className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col justify-between shadow-sm">
+          <span className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Equip</span>
+          <span className="font-sans font-black text-2xl text-neutral-900 mt-2">{totals.membres}</span>
         </div>
 
-        <div className="bg-white border border-neutral-200 rounded-lg p-6 flex items-center justify-between shadow-sm">
-          <div>
-            <span className="block text-xs font-bold text-neutral-400 uppercase tracking-wider">Contactes</span>
-            <span className="font-sans font-black text-3xl text-neutral-900 mt-1 block">{totals.contactes}</span>
-          </div>
-          <div className="flex h-12 w-12 items-center justify-center rounded bg-primary/5 text-primary border border-primary/10">
-            <Mail size={22} />
-          </div>
+        <div className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col justify-between shadow-sm">
+          <span className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Contactes</span>
+          <span className="font-sans font-black text-2xl text-neutral-900 mt-2">{totals.contactes}</span>
+        </div>
+
+        <div className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col justify-between shadow-sm">
+          <span className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Subscriptors</span>
+          <span className="font-sans font-black text-2xl text-neutral-900 mt-2">{totals.butlleti}</span>
+        </div>
+
+        <div className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col justify-between shadow-sm">
+          <span className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Preguntes pend.</span>
+          <span className={`font-sans font-black text-2xl mt-2 ${totals.preguntesPendents > 0 ? 'text-red-600' : 'text-neutral-900'}`}>{totals.preguntesPendents}</span>
+        </div>
+
+        <div className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col justify-between shadow-sm">
+          <span className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Comerços pend.</span>
+          <span className={`font-sans font-black text-2xl mt-2 ${totals.comercosPendents > 0 ? 'text-yellow-600' : 'text-neutral-900'}`}>{totals.comercosPendents}</span>
+        </div>
+      </div>
+
+      {/* Targetes de Gestió Ràpida (Mòbil Friendly) */}
+      <div className="space-y-4">
+        <h3 className="font-sans font-bold text-sm text-neutral-900 uppercase tracking-wider">Gestió de Mòduls</h3>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+          <Link href="/admin/butlleti" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
+            <MailQuestion className="text-primary" size={20} />
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Butlletí</span>
+          </Link>
+
+          <Link href="/admin/transparencia" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
+            <Landmark className="text-primary" size={20} />
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Transparència</span>
+          </Link>
+
+          <Link href="/admin/dades" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
+            <TrendingUp className="text-primary" size={20} />
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Dades municipi</span>
+          </Link>
+
+          <Link href="/admin/preguntes" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm relative">
+            <HelpCircle className="text-primary" size={20} />
+            {totals.preguntesPendents > 0 && (
+              <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-red-600 rounded-full"></span>
+            )}
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Preguntes</span>
+          </Link>
+
+          <Link href="/admin/compromisos" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
+            <ShieldCheck className="text-primary" size={20} />
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Compromisos</span>
+          </Link>
+
+          <Link href="/admin/comerc" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm relative">
+            <Store className="text-primary" size={20} />
+            {totals.comercosPendents > 0 && (
+              <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-yellow-500 rounded-full"></span>
+            )}
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Comerços</span>
+          </Link>
         </div>
       </div>
 
