@@ -203,6 +203,17 @@ export default function Header({ config = {} }: { config?: Record<string, string
                 </Link>
               </div>
             </div>
+
+            {user && userRole === 'admin' && (
+              <Link
+                href="/admin"
+                className={`text-[11px] font-black uppercase tracking-wider text-neutral-900 border border-primary bg-primary px-3 py-1.5 rounded shadow-sm hover:bg-primary-dark transition-all ${
+                  pathname.startsWith('/admin') ? 'bg-primary-dark' : ''
+                }`}
+              >
+                Administració
+              </Link>
+            )}
           </nav>
 
           {/* Icones de Redes i Botó Menú Mòbil */}
@@ -301,6 +312,17 @@ export default function Header({ config = {} }: { config?: Record<string, string
 
           {/* Seccions Principals */}
           <div className="space-y-2">
+            {user && userRole === 'admin' && (
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-3 py-2.5 rounded font-black uppercase tracking-wider text-neutral-950 bg-primary/95 border border-primary/20 ${
+                  pathname.startsWith('/admin') ? 'bg-primary-dark' : ''
+                }`}
+              >
+                Administració Web
+              </Link>
+            )}
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}

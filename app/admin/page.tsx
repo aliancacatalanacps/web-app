@@ -156,10 +156,23 @@ export default async function AdminDashboardPage() {
       <div className="space-y-4">
         <h3 className="font-sans font-bold text-sm text-neutral-900 uppercase tracking-wider">Gestió de Mòduls</h3>
         
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
-          <Link href="/admin/butlleti" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
-            <MailQuestion className="text-primary" size={20} />
-            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Butlletí</span>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <Link href="/admin/noticies" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
+            <FileText className="text-primary" size={20} />
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Notícies i Actualitat</span>
+          </Link>
+
+          <Link href="/admin/membres" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
+            <Users className="text-primary" size={20} />
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Equip Municipal</span>
+          </Link>
+
+          <Link href="/admin/comerc" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm relative">
+            <Store className="text-primary" size={20} />
+            {totals.comercosPendents > 0 && (
+              <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-yellow-500 rounded-full animate-pulse"></span>
+            )}
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Directori Comerç</span>
           </Link>
 
           <Link href="/admin/transparencia" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
@@ -172,25 +185,27 @@ export default async function AdminDashboardPage() {
             <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Dades municipi</span>
           </Link>
 
-          <Link href="/admin/preguntes" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm relative">
-            <HelpCircle className="text-primary" size={20} />
-            {totals.preguntesPendents > 0 && (
-              <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-red-600 rounded-full"></span>
-            )}
-            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Preguntes</span>
-          </Link>
-
           <Link href="/admin/compromisos" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
             <ShieldCheck className="text-primary" size={20} />
             <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Compromisos</span>
           </Link>
 
-          <Link href="/admin/comerc" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm relative">
-            <Store className="text-primary" size={20} />
-            {totals.comercosPendents > 0 && (
-              <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-yellow-500 rounded-full"></span>
+          <Link href="/admin/contactes" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
+            <Mail className="text-primary" size={20} />
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Bústia de Contacte</span>
+          </Link>
+
+          <Link href="/admin/preguntes" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm relative">
+            <HelpCircle className="text-primary" size={20} />
+            {totals.preguntesPendents > 0 && (
+              <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-red-600 rounded-full animate-pulse"></span>
             )}
-            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Comerços</span>
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Preguntes Ciutadanes</span>
+          </Link>
+
+          <Link href="/admin/butlleti" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
+            <MailQuestion className="text-primary" size={20} />
+            <span className="text-[10px] font-bold text-neutral-700 uppercase tracking-wider">Subscriptors Butlletí</span>
           </Link>
 
           <Link href="/admin/configuracio" className="bg-white border border-neutral-200 rounded-lg p-4 flex flex-col items-center text-center justify-center gap-2 hover:bg-neutral-50 transition-colors shadow-sm">
