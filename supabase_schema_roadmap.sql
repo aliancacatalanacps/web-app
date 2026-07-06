@@ -1,6 +1,7 @@
 -- ==========================================
 -- ROADMAP FASES 2 A 5 (Aliança Catalana Platja d'Aro)
 -- Executa aquestes consultes a mesura que activis cada nova fase.
+-- Aquest script és completament idempotent (es pot executar múltiples vegades).
 -- ==========================================
 
 -- === FASE 2: BUTLLETÍ, TRANSPARÈNCIA I DADES DEL MUNICIPI ===
@@ -41,30 +42,36 @@ alter table public.transparencia_economica enable row level security;
 alter table public.dades_municipi enable row level security;
 
 -- Polítiques RLS Fase 2
+drop policy if exists "Permetre inserció pública de butlletins" on public.butlleti_subscriptors;
 create policy "Permetre inserció pública de butlletins"
   on public.butlleti_subscriptors for insert
   with check (true);
 
+drop policy if exists "Permetre CRUD de butlletins als admins" on public.butlleti_subscriptors;
 create policy "Permetre CRUD de butlletins als admins"
   on public.butlleti_subscriptors for all
   to authenticated
   using (true)
   with check (true);
 
+drop policy if exists "Permetre lectura pública de transparència" on public.transparencia_economica;
 create policy "Permetre lectura pública de transparència"
   on public.transparencia_economica for select
   using (true);
 
+drop policy if exists "Permetre CRUD de transparència als admins" on public.transparencia_economica;
 create policy "Permetre CRUD de transparència als admins"
   on public.transparencia_economica for all
   to authenticated
   using (true)
   with check (true);
 
+drop policy if exists "Permetre lectura pública de dades municipals" on public.dades_municipi;
 create policy "Permetre lectura pública de dades municipals"
   on public.dades_municipi for select
   using (true);
 
+drop policy if exists "Permetre CRUD de dades municipals als admins" on public.dades_municipi;
 create policy "Permetre CRUD de dades municipals als admins"
   on public.dades_municipi for all
   to authenticated
@@ -90,10 +97,12 @@ create table if not exists public.mocions (
 alter table public.mocions enable row level security;
 
 -- Polítiques RLS Fase 3
+drop policy if exists "Permetre lectura pública de mocions" on public.mocions;
 create policy "Permetre lectura pública de mocions"
   on public.mocions for select
   using (true);
 
+drop policy if exists "Permetre CRUD de mocions als admins" on public.mocions;
 create policy "Permetre CRUD de mocions als admins"
   on public.mocions for all
   to authenticated
@@ -129,24 +138,29 @@ alter table public.preguntes_ciutadanes enable row level security;
 alter table public.compromisos enable row level security;
 
 -- Polítiques RLS Fase 4
+drop policy if exists "Permetre inserció pública de preguntes" on public.preguntes_ciutadanes;
 create policy "Permetre inserció pública de preguntes"
   on public.preguntes_ciutadanes for insert
   with check (true);
 
+drop policy if exists "Permetre lectura pública de preguntes contestades i publicades" on public.preguntes_ciutadanes;
 create policy "Permetre lectura pública de preguntes contestades i publicades"
   on public.preguntes_ciutadanes for select
   using (publicat = true);
 
+drop policy if exists "Permetre CRUD de preguntes als admins" on public.preguntes_ciutadanes;
 create policy "Permetre CRUD de preguntes als admins"
   on public.preguntes_ciutadanes for all
   to authenticated
   using (true)
   with check (true);
 
+drop policy if exists "Permetre lectura pública de compromisos" on public.compromisos;
 create policy "Permetre lectura pública de compromisos"
   on public.compromisos for select
   using (true);
 
+drop policy if exists "Permetre CRUD de compromisos als admins" on public.compromisos;
 create policy "Permetre CRUD de compromisos als admins"
   on public.compromisos for all
   to authenticated
@@ -172,14 +186,17 @@ create table if not exists public.comerc_local (
 alter table public.comerc_local enable row level security;
 
 -- Polítiques RLS Fase 5
+drop policy if exists "Permetre lectura pública de comerços aprovats" on public.comerc_local;
 create policy "Permetre lectura pública de comerços aprovats"
   on public.comerc_local for select
   using (aprovat = true);
 
+drop policy if exists "Permetre inserció de sol·licitud pública de comerç" on public.comerc_local;
 create policy "Permetre inserció de sol·licitud pública de comerç"
   on public.comerc_local for insert
   with check (true);
 
+drop policy if exists "Permetre CRUD de comerços als admins" on public.comerc_local;
 create policy "Permetre CRUD de comerços als admins"
   on public.comerc_local for all
   to authenticated

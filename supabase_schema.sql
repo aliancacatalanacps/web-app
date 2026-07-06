@@ -53,10 +53,12 @@ alter table public.contactes enable row level security;
 -- POLÍTIQUES RLS --
 
 -- noticies: Lectura pública si està publicat. Escriptura només per a usuaris autenticats (admins)
+drop policy if exists "Permetre lectura pública de notícies publicades" on public.noticies;
 create policy "Permetre lectura pública de notícies publicades"
   on public.noticies for select
   using (publicat = true);
 
+drop policy if exists "Permetre CRUD complet de notícies als admins" on public.noticies;
 create policy "Permetre CRUD complet de notícies als admins"
   on public.noticies for all
   to authenticated
@@ -64,10 +66,12 @@ create policy "Permetre CRUD complet de notícies als admins"
   with check (true);
 
 -- noticies_fotos: Lectura pública. Escriptura només per a usuaris autenticats (admins)
+drop policy if exists "Permetre lectura pública de fotos de notícies" on public.noticies_fotos;
 create policy "Permetre lectura pública de fotos de notícies"
   on public.noticies_fotos for select
   using (true);
 
+drop policy if exists "Permetre CRUD complet de fotos als admins" on public.noticies_fotos;
 create policy "Permetre CRUD complet de fotos als admins"
   on public.noticies_fotos for all
   to authenticated
@@ -75,10 +79,12 @@ create policy "Permetre CRUD complet de fotos als admins"
   with check (true);
 
 -- membres: Lectura pública si està actiu. Escriptura només per a usuaris autenticats (admins)
+drop policy if exists "Permetre lectura pública de membres actius" on public.membres;
 create policy "Permetre lectura pública de membres actius"
   on public.membres for select
   using (actiu = true);
 
+drop policy if exists "Permetre CRUD complet de membres als admins" on public.membres;
 create policy "Permetre CRUD complet de membres als admins"
   on public.membres for all
   to authenticated
@@ -86,10 +92,12 @@ create policy "Permetre CRUD complet de membres als admins"
   with check (true);
 
 -- contactes: Creació pública (inserció). Lectura i modificació només per a usuaris autenticats (admins)
+drop policy if exists "Permetre inserció pública de contactes" on public.contactes;
 create policy "Permetre inserció pública de contactes"
   on public.contactes for insert
   with check (true);
 
+drop policy if exists "Permetre lectura i modificació de contactes als admins" on public.contactes;
 create policy "Permetre lectura i modificació de contactes als admins"
   on public.contactes for all
   to authenticated
