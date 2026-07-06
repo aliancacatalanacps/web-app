@@ -49,13 +49,15 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded bg-primary text-white font-extrabold text-sm tracking-tight border border-primary-dark shadow-sm">
-                AC
-              </div>
-              <div className="flex flex-col">
-                <span className="font-sans font-bold text-sm tracking-tight text-neutral-900 leading-none">Aliança Catalana</span>
-                <span className="font-sans text-[10px] font-semibold text-primary tracking-widest uppercase mt-0.5 leading-none">Platja d'Aro</span>
+            <Link href="/" className="flex items-center">
+              <img
+                src="/logo.png"
+                alt="Aliança Catalana"
+                className="h-10 w-auto object-contain"
+              />
+              <div className="flex flex-col ml-2.5 border-l border-neutral-200 pl-2.5">
+                <span className="font-sans font-bold text-[13px] tracking-tight text-neutral-900 leading-none">Platja d'Aro</span>
+                <span className="font-sans text-[8px] font-bold text-primary tracking-widest uppercase mt-0.5 leading-none">i S'Agaró</span>
               </div>
             </Link>
           </div>

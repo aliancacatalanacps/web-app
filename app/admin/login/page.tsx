@@ -74,15 +74,17 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md space-y-8 bg-white p-8 border border-neutral-200 rounded-lg shadow-sm">
         
         {/* Capçalera */}
-        <div className="text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded bg-primary text-white font-extrabold text-lg border border-primary-dark">
-            AC
-          </div>
-          <h2 className="mt-6 font-sans font-black text-2xl tracking-tight text-neutral-900">
+        <div className="text-center flex flex-col items-center">
+          <img
+            src="/logo.png"
+            alt="Aliança Catalana"
+            className="h-12 w-auto object-contain mb-4"
+          />
+          <h2 className="font-sans font-black text-2xl tracking-tight text-neutral-900">
             Panell d'Administració
           </h2>
           <p className="mt-2 text-xs text-neutral-500 font-semibold uppercase tracking-wider">
-            Aliança Catalana Platja d'Aro
+            Platja d'Aro i S'Agaró
           </p>
         </div>
 

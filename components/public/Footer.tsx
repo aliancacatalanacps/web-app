@@ -35,13 +35,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Logo i Descripció */}
           <div className="flex flex-col space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded bg-primary text-white font-extrabold text-xs tracking-tight border border-primary-dark">
-                AC
-              </div>
-              <div className="flex flex-col">
-                <span className="font-sans font-bold text-xs tracking-tight text-neutral-900 leading-none">Aliança Catalana</span>
-                <span className="font-sans text-[8px] font-semibold text-primary tracking-widest uppercase mt-0.5 leading-none">Platja d'Aro</span>
+            <div className="flex items-center">
+              <img
+                src="/logo.png"
+                alt="Aliança Catalana"
+                className="h-9 w-auto object-contain"
+              />
+              <div className="flex flex-col ml-2 border-l border-neutral-200 pl-2">
+                <span className="font-sans font-bold text-xs tracking-tight text-neutral-900 leading-none">Platja d'Aro</span>
+                <span className="font-sans text-[7px] font-bold text-primary tracking-widest uppercase mt-0.5 leading-none">i S'Agaró</span>
               </div>
             </div>
             <p className="text-sm text-neutral-500 max-w-xs">

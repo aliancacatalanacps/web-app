@@ -82,13 +82,15 @@ export default function AdminNav() {
       {/* 2. NAVEGACIÓ DESKTOP (Sidebar) */}
       <aside className="hidden md:flex flex-col w-64 border-r border-neutral-200 bg-white h-screen fixed top-0 left-0 p-6 z-30 overflow-y-auto">
         {/* Brand */}
-        <div className="flex items-center gap-3 mb-6 pb-6 border-b border-neutral-100 shrink-0">
-          <div className="flex h-9 w-9 items-center justify-center rounded bg-primary text-white font-extrabold text-sm border border-primary-dark">
-            AC
-          </div>
-          <div className="flex flex-col">
-            <span className="font-sans font-bold text-xs tracking-tight text-neutral-900 leading-none">Aliança Catalana</span>
-            <span className="font-sans text-[8px] font-semibold text-primary tracking-widest uppercase mt-0.5 leading-none">Platja d'Aro</span>
+        <div className="flex items-center mb-6 pb-6 border-b border-neutral-100 shrink-0">
+          <img
+            src="/logo.png"
+            alt="Aliança Catalana"
+            className="h-9 w-auto object-contain"
+          />
+          <div className="flex flex-col ml-2 border-l border-neutral-200 pl-2">
+            <span className="font-sans font-bold text-xs tracking-tight text-neutral-900 leading-none">Platja d'Aro</span>
+            <span className="font-sans text-[7px] font-bold text-primary tracking-widest uppercase mt-0.5 leading-none">i S'Agaró</span>
           </div>
         </div>
 
