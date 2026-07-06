@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useState } from 'react'
-import { Menu, X, ChevronDown } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Menu, X, ChevronDown, LogIn, User } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 // Icones SVG per evitar problemes d'importació amb versions de lucide-react
 function InstagramIcon({ className }: { className?: string }) {
@@ -33,10 +34,55 @@ function TikTokIcon({ className }: { className?: string }) {
 export default function Header({ config = {} }: { config?: Record<string, string> }) {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [user, setUser] = useState<any>(null)
+  const [userRole, setUserRole] = useState<string>('user')
 
   const instagramUrl = config.xarxes_instagram || 'https://instagram.com/acplatjadaro'
   const tiktokUrl = config.xarxes_tiktok || 'https://tiktok.com/@acplatjadaro'
   const twitterUrl = config.xarxes_twitter || 'https://x.com/acplatjadaro'
+
+  const supabase = createClient()
+
+  useEffect(() => {
+    // Obtenir usuari actual al carregar
+    async function getUserData() {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+      if (user) {
+        const { data: perfil } = await supabase
+          .from('usuaris')
+          .select('role')
+          .eq('id', user.id)
+          .single()
+        if (perfil) {
+          setUserRole(perfil.role)
+        }
+      }
+    }
+
+    getUserData()
+
+    // Escoltar canvis d'auth per actualitzar-ho en temps real
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setUser(session?.user || null)
+      if (session?.user) {
+        const { data: perfil } = await supabase
+          .from('usuaris')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
+        if (perfil) {
+          setUserRole(perfil.role)
+        }
+      } else {
+        setUserRole('user')
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
+  }, [])
 
   // Auxiliar per marcar actius els elements del menú que tenen subrutes
   const isTabActive = (paths: string[]) => {
@@ -161,7 +207,30 @@ export default function Header({ config = {} }: { config?: Record<string, string
 
           {/* Icones de Redes i Botó Menú Mòbil */}
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-3 text-neutral-500">
+            
+            {/* Dinàmic Accés Usuari */}
+            <div className="flex items-center gap-2">
+              {user ? (
+                <Link
+                  href={userRole === 'admin' ? '/admin' : '/tauler'}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider shadow-sm hover:bg-primary-dark transition-all"
+                >
+                  <User size={12} />
+                  <span>{userRole === 'admin' ? 'Panell Admin' : 'El meu tauler'}</span>
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full border border-neutral-300 text-neutral-600 hover:text-primary hover:border-primary text-[10px] font-bold uppercase tracking-wider transition-colors"
+                >
+                  <LogIn size={11} />
+                  <span>Accedir</span>
+                </Link>
+              )}
+            </div>
+
+            {/* Xarxes Socials */}
+            <div className="hidden sm:flex items-center gap-3 text-neutral-500 border-l border-neutral-200 pl-3 ml-1">
               <a
                 href={instagramUrl}
                 target="_blank"
@@ -206,6 +275,30 @@ export default function Header({ config = {} }: { config?: Record<string, string
       {/* Menú Mòbil (Ben ordenat per categories) */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-b border-neutral-200 bg-white px-6 py-6 space-y-4 max-h-[80vh] overflow-y-auto">
+          
+          {/* Enllaç mòbil Accés Usuari */}
+          <div className="pb-3 border-b border-neutral-100">
+            {user ? (
+              <Link
+                href={userRole === 'admin' ? '/admin' : '/tauler'}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded bg-primary text-white text-xs font-bold uppercase tracking-wider"
+              >
+                <User size={14} />
+                {userRole === 'admin' ? 'Anar al Panell Admin' : 'Anar al meu tauler'}
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 w-full py-2.5 rounded border border-neutral-300 text-neutral-700 text-xs font-bold uppercase tracking-wider hover:border-primary hover:text-primary"
+              >
+                <LogIn size={14} />
+                Iniciar Sessió / Registre
+              </Link>
+            )}
+          </div>
+
           {/* Seccions Principals */}
           <div className="space-y-2">
             <Link
