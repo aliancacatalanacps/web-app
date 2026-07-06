@@ -141,19 +141,19 @@ export default function Header({ config = {} }: { config?: Record<string, string
                   href="/transparencia"
                   className="block px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-50 hover:text-primary"
                 >
-                  Comptes del grup
+                  Assignació municipal
                 </Link>
                 <Link
                   href="/dades"
                   className="block px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-50 hover:text-primary"
                 >
-                  Dades Municipals
+                  Dades
                 </Link>
                 <Link
                   href="/compromisos"
                   className="block px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-neutral-700 hover:bg-neutral-50 hover:text-primary"
                 >
-                  Compromisos electorals
+                  Compromisos
                 </Link>
               </div>
             </div>
@@ -279,7 +279,7 @@ export default function Header({ config = {} }: { config?: Record<string, string
                 pathname === '/transparencia' ? 'text-primary' : 'text-neutral-600'
               }`}
             >
-              • Comptes del grup
+              • Assignació municipal
             </Link>
             <Link
               href="/dades"
@@ -288,7 +288,7 @@ export default function Header({ config = {} }: { config?: Record<string, string
                 pathname === '/dades' ? 'text-primary' : 'text-neutral-600'
               }`}
             >
-              • Dades municipals
+              • Dades
             </Link>
             <Link
               href="/compromisos"
